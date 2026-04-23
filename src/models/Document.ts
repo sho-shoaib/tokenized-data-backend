@@ -16,6 +16,7 @@ export interface DocumentAttributes {
   fileUrl: string | null;
   status: DocumentStatus;
   ownerWallet: string;
+  ownerEmail: string;
   tokenId: number | null;
   contractAddress: string | null;
   txHash: string | null;
@@ -40,6 +41,7 @@ export class Document extends Model<DocumentAttributes, DocumentCreationAttribut
   declare fileUrl: string | null;
   declare status: DocumentStatus;
   declare ownerWallet: string;
+  declare ownerEmail: string;
   declare tokenId: number | null;
   declare contractAddress: string | null;
   declare txHash: string | null;
@@ -88,6 +90,10 @@ Document.init(
       defaultValue: "pending",
     },
     ownerWallet: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ownerEmail: {
       type: DataTypes.STRING,
       allowNull: false,
     },

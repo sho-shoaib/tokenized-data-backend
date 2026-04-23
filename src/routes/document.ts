@@ -23,23 +23,70 @@ router.post(
   "/",
   authenticate,
   requirePersona("creator"),
-  upload.single("file"),
-  documentController.create
+  // upload.single("file"),
+  documentController.create,
 );
-router.delete("/:id", authenticate, requirePersona("creator"), documentController.remove);
-router.patch("/:id/mint", authenticate, requirePersona("creator"), documentController.mint);
+router.delete(
+  "/:id",
+  authenticate,
+  requirePersona("creator"),
+  documentController.remove,
+);
+router.patch(
+  "/:id/mint",
+  authenticate,
+  requirePersona("creator"),
+  documentController.mint,
+);
 
 // Owner routes
 router.get("/", authenticate, requirePersona("owner"), documentController.list);
-router.get("/:id/viewers", authenticate, requirePersona("owner"), accessController.listViewers);
-router.post("/:id/viewers", authenticate, requirePersona("owner"), accessController.grant);
-router.delete("/:id/viewers/:viewerId", authenticate, requirePersona("owner"), accessController.revoke);
-router.get("/:id/access-logs", authenticate, requirePersona("owner"), accessController.listLogs);
+router.get(
+  "/:id/viewers",
+  authenticate,
+  requirePersona("owner"),
+  accessController.listViewers,
+);
+router.post(
+  "/:id/viewers",
+  authenticate,
+  requirePersona("owner"),
+  accessController.grant,
+);
+router.delete(
+  "/:id/viewers/:viewerId",
+  authenticate,
+  requirePersona("owner"),
+  accessController.revoke,
+);
+router.get(
+  "/:id/access-logs",
+  authenticate,
+  requirePersona("owner"),
+  accessController.listLogs,
+);
 
 // Shared (owner + creator can view document detail)
-router.get("/:id", authenticate, requirePersona("owner", "creator"), documentController.getOne);
+router.get(
+  "/:id",
+  authenticate,
+  requirePersona("owner", "creator"),
+  documentController.getOne,
+);
 
 // Viewer routes
-router.post("/:id/sign", authenticate, requirePersona("viewer"), accessController.sign);
+router.post(
+  "/:id/sign",
+  authenticate,
+  requirePersona("viewer"),
+  accessController.sign,
+);
+
+router.get(
+  "/owners/:ownerWallet",
+  authenticate,
+  requirePersona("creator"),
+  documentController.getOwners,
+);
 
 export default router;

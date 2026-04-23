@@ -9,6 +9,7 @@ export async function createDocument(data: {
   category: DocumentCategory;
   fileType: FileType;
   ownerWallet: string;
+  ownerEmail: string;
   fileUrl: string | null;
   creatorId: string;
 }) {
@@ -18,6 +19,9 @@ export async function createDocument(data: {
   });
   if (!collection) throw createError("Collection not found", 404);
 
+  console.log(data.fileUrl);
+  console.log(data.ownerEmail);
+
   return Document.create({
     collectionId: data.collectionId,
     title: data.title,
@@ -25,6 +29,7 @@ export async function createDocument(data: {
     category: data.category,
     fileType: data.fileType,
     ownerWallet: data.ownerWallet,
+    ownerEmail: data.ownerEmail,
     fileUrl: data.fileUrl,
     status: "pending",
     creatorId: data.creatorId,
@@ -62,9 +67,21 @@ export async function deleteDocument(id: string, creatorId: string) {
 export async function mintDocument(
   id: string,
   creatorId: string,
-  data: { tokenId: number; contractAddress: string; txHash: string; onchainTokenId?: string }
+  data: {
+    tokenId: number;
+    contractAddress: string;
+    txHash: string;
+    onchainTokenId?: string;
+  },
 ) {
   const doc = await Document.findOne({ where: { id, creatorId } });
   if (!doc) throw createError("Document not found", 404);
   return doc.update({ ...data, status: "minted" });
+}
+
+export async function getOwnersByWallet(ownerWallet: string) {
+  return User.findAll({
+    where: { wallet: ownerWallet, persona: "owner" },
+    attributes: ["email"],
+  });
 }

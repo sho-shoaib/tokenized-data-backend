@@ -4,8 +4,10 @@ import { createDocumentSchema } from "../validators/document.js";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
+    console.log(req.body);
+
     const data = createDocumentSchema.parse(req.body);
-    const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const fileUrl = data.fileUrl || null;
     const doc = await documentService.createDocument({
       ...data,
       fileUrl,
@@ -21,7 +23,9 @@ export async function list(req: Request, res: Response, next: NextFunction) {
   try {
     const { wallet } = req.user!;
     if (!wallet) {
-      res.status(400).json({ message: "No wallet associated with this account" });
+      res
+        .status(400)
+        .json({ message: "No wallet associated with this account" });
       return;
     }
     const docs = await documentService.listDocumentsByOwnerWallet(wallet);
@@ -42,7 +46,10 @@ export async function getOne(req: Request, res: Response, next: NextFunction) {
 
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
-    await documentService.deleteDocument(req.params["id"] as string, req.user!.userId);
+    await documentService.deleteDocument(
+      req.params["id"] as string,
+      req.user!.userId,
+    );
     res.status(204).send();
   } catch (err) {
     next(err);
@@ -57,13 +64,33 @@ export async function mint(req: Request, res: Response, next: NextFunction) {
       txHash: string;
       onchainTokenId?: string;
     };
-    const doc = await documentService.mintDocument(req.params["id"] as string, req.user!.userId, {
-      tokenId,
-      contractAddress,
-      txHash,
-      onchainTokenId,
-    });
+    const doc = await documentService.mintDocument(
+      req.params["id"] as string,
+      req.user!.userId,
+      {
+        tokenId,
+        contractAddress,
+        txHash,
+        onchainTokenId,
+      },
+    );
     res.json(doc);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getOwners(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { ownerWallet } = req.params;
+    const owners = await documentService.getOwnersByWallet(
+      ownerWallet as string,
+    );
+    res.json({ owners });
   } catch (err) {
     next(err);
   }
