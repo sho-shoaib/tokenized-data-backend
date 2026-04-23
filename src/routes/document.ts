@@ -26,6 +26,13 @@ router.post(
   // upload.single("file"),
   documentController.create,
 );
+router.get(
+  "/:id",
+  authenticate,
+  requirePersona("creator"),
+  // upload.single("file"),
+  documentController.getOne,
+);
 router.delete(
   "/:id",
   authenticate,
