@@ -21,7 +21,12 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function list(req: Request, res: Response, next: NextFunction) {
   try {
-    const { wallet } = req.user!;
+    const { persona, userId, wallet } = req.user!;
+    if (persona === "creator") {
+      const docs = await documentService.listDocumentsByCreatorId(userId);
+      res.json(docs);
+      return;
+    }
     if (!wallet) {
       res
         .status(400)

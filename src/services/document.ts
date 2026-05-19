@@ -47,6 +47,17 @@ export async function listDocumentsByOwnerWallet(ownerWallet: string) {
   });
 }
 
+export async function listDocumentsByCreatorId(creatorId: string) {
+  return Document.findAll({
+    where: { creatorId },
+    include: [
+      { model: Collection, as: "collection", attributes: ["id", "name"] },
+      { model: User, as: "creator", attributes: ["id", "name"] },
+    ],
+    order: [["createdAt", "DESC"]],
+  });
+}
+
 export async function getDocument(id: string) {
   const doc = await Document.findByPk(id, {
     include: [

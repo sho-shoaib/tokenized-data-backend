@@ -47,7 +47,7 @@ router.patch(
 );
 
 // Owner routes
-router.get("/", authenticate, requirePersona("owner"), documentController.list);
+router.get("/", authenticate, requirePersona("owner", "creator"), documentController.list);
 router.get(
   "/:id/viewers",
   authenticate,
