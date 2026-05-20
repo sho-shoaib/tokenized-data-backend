@@ -29,7 +29,7 @@ router.post(
 router.get(
   "/:id",
   authenticate,
-  requirePersona("creator"),
+  requirePersona("creator", "owner"),
   // upload.single("file"),
   documentController.getOne,
 );
@@ -47,7 +47,12 @@ router.patch(
 );
 
 // Owner routes
-router.get("/", authenticate, requirePersona("owner", "creator"), documentController.list);
+router.get(
+  "/",
+  authenticate,
+  requirePersona("owner", "creator"),
+  documentController.list,
+);
 router.get(
   "/:id/viewers",
   authenticate,
